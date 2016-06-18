@@ -4,11 +4,12 @@
 int main(){
   Board* board = default_board();
 
-  for(int x = 0; x++; x<8){
-    for(int y = 0; y++; y<8){
-      Location* loc = new_location(x, y);
-      if(is_piece_at_location(board, loc)){
-        printf("There is a key at (%d, %d) of team %d\n", x, y, get_piece_at_location(board, loc)->team);
+  for(int x = 0;x<8 ;x++ ){
+    for(int y = 0;y<8;  y++){
+      if(is_piece_at_location(board, x, y)){
+        printf("There is a key at (%d, %d) of team %d\n", x, y, get_piece_at_location(board, x, y)->team);
+      }else{
+        printf("There is no key at (%d, %d)\n", x, y);
       }
     }
   }
