@@ -1,7 +1,8 @@
+#include <string.h>
+#include <errno.h>
+#include <stdbool.h>
 #include "board.h"
-#include "errno.h"
 #include "key.h"
-#include "string.h"
 
 Board* new_board(void){
   /*
