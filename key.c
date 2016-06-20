@@ -4,8 +4,7 @@
 Key* new_key(Team team, Orientation orientation, bool is_locked){
   Key* key = (Key*) malloc(sizeof(Key));
 
-  if(key == NULL){
-    errno = ENOMEM;
+  if(errno == ENOMEM){
     return NULL;
   }
 
