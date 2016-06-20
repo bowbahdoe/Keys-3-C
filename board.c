@@ -45,7 +45,12 @@ void set_unlocked_piece_at_location(Board* board, int x, int y, Key* piece){
 
   if there is already a key there, it frees it and replaces it
   */
+  if(!is_location_in_bounds(x, y)){
+    return;
+  }
+
   Key* possible_key = get_unlocked_piece_at_location(board, x, y);
+
   if(possible_key != NULL){
     free_key(possible_key);
     board->unlocked_keys[x][y] = NULL;
@@ -59,6 +64,10 @@ void set_locked_piece_at_location(Board* board, int x, int y, Key* piece){
 
   if there is already a key there, it frees it and replaces it
   */
+  if(!is_location_in_bounds(x, y)){
+    return;
+  }
+
   Key* possible_key = get_locked_piece_at_location(board, x, y);
   if(possible_key != NULL){
     free_key(possible_key);
@@ -74,6 +83,10 @@ Key* get_unlocked_piece_at_location(Board* board, int x, int y){
 
   returns NULL if there is no key there
   */
+  if(!is_location_in_bounds(x, y)){
+    return NULL;
+  }
+
   if(board->unlocked_keys[x][y] == NULL){
     return NULL;
   }else{
@@ -87,37 +100,15 @@ Key* get_locked_piece_at_location(Board* board, int x, int y){
 
   returns NULL if there is no key there
   */
+  if(!is_location_in_bounds(x, y)){
+    return NULL;
+  }
+
   if(board->locked_keys[x][y] == NULL){
     return NULL;
   }else{
     return board->locked_keys[x][y];
   }
-}
-
-void new_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation, bool is_locked){
-  /*
-  Creates a new piece at the location
-  */
-  Key* key_to_set = new_key(team, orientation, is_locked);
-  if(is_locked){
-    set_locked_piece_at_location(board, x, y, key_to_set);
-  }else{
-    set_unlocked_piece_at_location(board, x, y, key_to_set);
-  }
-}
-
-void new_unlocked_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation){
-  /*
-  Creates a new unlocked piece at the location
-  */
-  new_piece_at_location(board, x, y, team, orientation, false);
-}
-
-void new_locked_key_piece_location(Board* board, int x, int y, Team team, Orientation orientation){
-  /*
-  Creates a new locked piece at the location
-  */
-  new_piece_at_location(board, x, y, team, orientation, true);
 }
 
 void remove_unlocked_piece_at_location(Board* board, int x, int y){
@@ -171,7 +162,7 @@ bool is_location_in_bounds(int x, int y){
   returns whether the given location is within an 8x8 grid
   */
 
-  return (x <= 8 && y <= 8 && x > 0 && y > 0);
+  return (x < 8 && y < 8 && x >= 0 && y >= 0);
 }
 
 bool is_unlocked_piece_at_location(Board* board, int x, int y){

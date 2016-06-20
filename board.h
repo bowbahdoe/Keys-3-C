@@ -39,13 +39,6 @@ Key* get_unlocked_piece_at_location  (Board* board, int x, int y);
 Key* get_locked_piece_at_location    (Board* board, int x, int y);
 
 /*
-Helpers to add pieces to a location
-*/
-void new_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation, bool is_locked);
-void new_unlocked_piece_at_location  (Board* board, int x, int y, Team team, Orientation orientation);
-void new_locked_key_piece_location   (Board* board, int x, int y, Team team, Orientation orientation);
-
-/*
 And helpers for removing a piece at the location
 */
 void remove_unlocked_piece_at_location(Board* board, int x, int y);
