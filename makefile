@@ -4,8 +4,9 @@ all:
 	gcc $(CFLAGS) key.c
 	gcc $(CFLAGS) board.c
 	gcc $(CFLAGS) main.c
+	gcc $(CFLAGS) gamestate.c
 
-	gcc main.o key.o board.o -o keys
+	gcc main.o key.o board.o gamestate.o -o keys
 
 openmp:
 	gcc $(CFLAGS) $(MPFLAGS) key.c

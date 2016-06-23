@@ -133,6 +133,19 @@ void remove_locked_piece_at_location(Board* board, int x, int y){
   }
 }
 
+void new_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation, bool is_locked){
+  if(is_locked){
+    set_locked_piece_at_location(board, x, y,new_key(team, orientation, is_locked));
+  }else{
+    set_unlocked_piece_at_location(board, x, y,new_key(team, orientation, is_locked));
+  }
+}
+void new_unlocked_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation){
+  new_piece_at_location(board, x, y, team, orientation, false);
+}
+void new_locked_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation){
+  new_piece_at_location(board, x, y, team, orientation, true);
+}
 
 Key* pop_unlocked_piece_at_location(Board* board, int x, int y){
   /*
@@ -229,8 +242,8 @@ bool is_locked_gold_piece_at_location(Board* board, int x, int y){
 }
 
 bool is_locked_silver_piece_at_location(Board* board, int x, int y){
-  if(is_unlocked_piece_at_location(board, x, y)){
-    Key* piece = get_unlocked_piece_at_location(board, x, y);
+  if(is_locked_piece_at_location(board, x, y)){
+    Key* piece = get_locked_piece_at_location(board, x, y);
     switch(piece->team){
       case gold:
         return false;
@@ -297,17 +310,17 @@ Board* default_board(void){
   Key* gold_key_2 = new_key(gold, north, false);
   Key* gold_key_3 = new_key(gold, north, false);
 
-  Key* silver_key_1 = new_key(silver, north, false);
-  Key* silver_key_2 = new_key(silver, north, false);
-  Key* silver_key_3 = new_key(silver, north, false);
+  Key* silver_key_1 = new_key(silver, south, false);
+  Key* silver_key_2 = new_key(silver, south, false);
+  Key* silver_key_3 = new_key(silver, south, false);
 
 
-  set_unlocked_piece_at_location(board, 0, 1, gold_key_1);
-  set_unlocked_piece_at_location(board, 0, 3, gold_key_2);
-  set_unlocked_piece_at_location(board, 0, 5, gold_key_3);
-  set_unlocked_piece_at_location(board, 7, 2, silver_key_1);
-  set_unlocked_piece_at_location(board, 7, 4, silver_key_2);
-  set_unlocked_piece_at_location(board, 7, 6, silver_key_3);
+  set_unlocked_piece_at_location(board, 1, 0, gold_key_1);
+  set_unlocked_piece_at_location(board, 3, 0, gold_key_2);
+  set_unlocked_piece_at_location(board, 5, 0, gold_key_3);
+  set_unlocked_piece_at_location(board, 2, 7, silver_key_1);
+  set_unlocked_piece_at_location(board, 4, 7, silver_key_2);
+  set_unlocked_piece_at_location(board, 6, 7, silver_key_3);
 
   return board;
 }

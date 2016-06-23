@@ -11,7 +11,7 @@ While we could make it dynamically expand and contract,
 128 pointers is reasonable to expect to fit in memory
 and greatly simplifies implementation
 */
-typedef struct{
+typedef struct {
   Key* unlocked_keys[8][8];
   Key* locked_keys[8][8];
 } Board;
@@ -44,7 +44,9 @@ And helpers for removing a piece at the location
 void remove_unlocked_piece_at_location(Board* board, int x, int y);
 void remove_locked_piece_at_location(Board* board, int x, int y);
 
-
+void new_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation, bool is_locked);
+void new_unlocked_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation);
+void new_locked_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation);
 /*
 removes keys from the location and returns the removed key
 */
