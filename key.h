@@ -11,15 +11,15 @@ InvalidDirection is used by later functions,
 and a key should never be set with that direction
 */
 typedef enum {
-  north,
-  northeast,
-  east,
-  southeast,
-  south,
-  southwest,
-  west,
-  northwest,
-  InvalidDirection
+    north,
+    northeast,
+    east,
+    southeast,
+    south,
+    southwest,
+    west,
+    northwest,
+    InvalidDirection
 } Orientation;
 
 /*
@@ -29,17 +29,17 @@ that is not defined, unlike for direction
 That being said, the team enum is needed to seperate the keys
 */
 typedef enum {
-  gold,
-  silver
+    gold,
+    silver
 } Team;
 
 /*
 Structure to define a key
 */
 typedef struct {
-  Team team;
-  Orientation orientation;
-  bool is_locked;
+    Team team;
+    Orientation orientation;
+    bool is_locked;
 } Key;
 
 /*
