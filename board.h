@@ -44,9 +44,14 @@ And helpers for removing a piece at the location
 void remove_unlocked_piece_at_location (Board* board, int x, int y);
 void remove_locked_piece_at_location   (Board* board, int x, int y);
 
+/*
+These helpers create a key at the location and implicitly allocate
+the space for that object
+*/
 void new_piece_at_location          (Board* board, int x, int y, Team team, Orientation orientation, bool is_locked);
 void new_unlocked_piece_at_location (Board* board, int x, int y, Team team, Orientation orientation);
 void new_locked_piece_at_location   (Board* board, int x, int y, Team team, Orientation orientation);
+
 /*
 removes keys from the location and returns the removed key
 */
@@ -55,6 +60,9 @@ Key* pop_locked_piece_at_location   (Board* board, int x, int y);
 
 bool is_location_in_bounds(int x, int y);
 
+/*
+Gets information about a location on the board.
+*/
 bool is_unlocked_piece_at_location        (Board* board, int x, int y);
 bool is_locked_piece_at_location          (Board* board, int x, int y);
 bool is_unlocked_gold_piece_at_location   (Board* board, int x, int y);
@@ -63,6 +71,10 @@ bool is_locked_gold_piece_at_location     (Board* board, int x, int y);
 bool is_locked_silver_piece_at_location   (Board* board, int x, int y);
 
 
+/*
+User-side actions that can be taken, including locking and unlocking pieces
+and moving pieces around
+*/
 void lock_piece_at_location   (Board* board, int x, int y);
 void unlock_piece_at_location (Board* board, int x, int y);
 void move_piece_to_location   (Board* board, int orig_x, int orig_y, int new_x, int new_y);

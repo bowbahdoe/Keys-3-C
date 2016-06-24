@@ -1,5 +1,7 @@
+#include <stdlib.h>
+#include <errno.h>
 #include "key.h"
-#include "errno.h"
+
 
 Key* new_key(Team team, Orientation orientation, bool is_locked){
   Key* key = (Key*) malloc(sizeof(Key));

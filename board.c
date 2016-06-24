@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <stdbool.h>
 #include "board.h"
@@ -287,13 +288,8 @@ void unlock_piece_at_location(Board* board, int x, int y){
 
 void move_piece_to_location(Board* board, int orig_x, int orig_y, int new_x, int new_y){
   if(is_unlocked_piece_at_location(board, orig_x, orig_y)){
-    if(is_unlocked_piece_at_location(board, new_x, new_y)){
-      free_key(get_unlocked_piece_at_location(board, new_x, new_y));
-      set_unlocked_piece_at_location(board, new_x, new_y, NULL);
-    }
-    Key* moving_piece = get_unlocked_piece_at_location(board, orig_x, orig_y);
+    Key* moving_piece = pop_unlocked_piece_at_location(board, orig_x, orig_y);
     set_unlocked_piece_at_location(board, new_x, new_y, moving_piece);
-    set_unlocked_piece_at_location(board, orig_x, orig_y, NULL);
   }
 
 }

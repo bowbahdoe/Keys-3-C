@@ -1,12 +1,13 @@
 CFLAGS = -std=c99 -c -fpic
 MPFLAGS = -fopenmp
+COMPILER = gcc
 all:
-	gcc $(CFLAGS) key.c
-	gcc $(CFLAGS) board.c
-	gcc $(CFLAGS) main.c
-	gcc $(CFLAGS) gamestate.c
+	$(COMPILER) $(CFLAGS) key.c
+	$(COMPILER) $(CFLAGS) board.c
+	$(COMPILER) $(CFLAGS) main.c
+	$(COMPILER) $(CFLAGS) gamestate.c
 
-	gcc main.o key.o board.o gamestate.o -o keys
+	$(COMPILER) main.o key.o board.o gamestate.o -o keys
 
 openmp:
 	gcc $(CFLAGS) $(MPFLAGS) key.c
