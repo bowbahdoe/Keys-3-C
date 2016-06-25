@@ -30,10 +30,10 @@ void free_board(Board* board_to_free){
   */
   for(int x = 0; x < 8; x++) {
     for(int y = 0; y < 8; y++){
-      Key* possible_key = get_unlocked_piece_at_location(board_to_free, x, y);
-      if(possible_key != NULL){
-        free_key(possible_key);
-      }
+        Key* possible_key = get_unlocked_piece_at_location(board_to_free, x, y);
+        if(possible_key != NULL){
+            free_key(possible_key);
+        }
     }
   }
 
@@ -41,174 +41,165 @@ void free_board(Board* board_to_free){
 }
 
 void set_unlocked_piece_at_location(Board* board, int x, int y, Key* piece){
-  /*
-  Sets the piece at the location to the passed key
+    /*
+    Sets the piece at the location to the passed key
 
-  if there is already a key there, it frees it and replaces it
-  */
-  if(!is_location_in_bounds(x, y)){
-    return;
-  }
+    if there is already a key there, it frees it and replaces it
 
-  Key* possible_key = get_unlocked_piece_at_location(board, x, y);
+    Memory leaks if you set to NULL and do not free elsewhere
+    */
+    if(!is_location_in_bounds(x, y)){
+        return;
+    }
 
-  if(possible_key != NULL){
-    free_key(possible_key);
-    board->unlocked_keys[x][y] = NULL;
-  }
-
-  board->unlocked_keys[x][y] = piece;
+    board->unlocked_keys[x][y] = piece;
 }
 void set_locked_piece_at_location(Board* board, int x, int y, Key* piece){
-  /*
-  Sets the piece at the location to the passed key
+    /*
+    Sets the piece at the location to the passed key
 
-  if there is already a key there, it frees it and replaces it
-  */
-  if(!is_location_in_bounds(x, y)){
-    return;
-  }
+    if there is already a key there, it frees it and replaces it
 
-  Key* possible_key = get_locked_piece_at_location(board, x, y);
-  if(possible_key != NULL){
-    free_key(possible_key);
-    board->locked_keys[x][y] = NULL;
-  }
+    Memory leaks if you set to NULL and do not free elsewhere
+    */
+    if(!is_location_in_bounds(x, y)){
+        return;
+    }
 
-  board->locked_keys[x][y] = piece;
+    board->locked_keys[x][y] = piece;
 }
 
 Key* get_unlocked_piece_at_location(Board* board, int x, int y){
-  /*
-  Gets the unlocked piece at the location
+    /*
+    Gets the unlocked piece at the location
 
-  returns NULL if there is no key there
-  */
-  if(!is_location_in_bounds(x, y)){
-    return NULL;
-  }
+    returns NULL if there is no key there
+    */
+    if(!is_location_in_bounds(x, y)){
+        return NULL;
+    }
 
-  if(board->unlocked_keys[x][y] == NULL){
-    return NULL;
-  }else{
-    return board->unlocked_keys[x][y];
-  }
+    if(board->unlocked_keys[x][y] == NULL){
+        return NULL;
+    }else{
+        return board->unlocked_keys[x][y];
+    }
 }
 
 Key* get_locked_piece_at_location(Board* board, int x, int y){
-  /*
-  Gets the locked piece at the location
+    /*
+    Gets the locked piece at the location
 
-  returns NULL if there is no key there
-  */
-  if(!is_location_in_bounds(x, y)){
-    return NULL;
-  }
+    returns NULL if there is no key there
+    */
+    if(!is_location_in_bounds(x, y)){
+        return NULL;
+    }
 
-  if(board->locked_keys[x][y] == NULL){
-    return NULL;
-  }else{
-    return board->locked_keys[x][y];
-  }
+    if(board->locked_keys[x][y] == NULL){
+        return NULL;
+    }else{
+        return board->locked_keys[x][y];
+    }
 }
 
 void remove_unlocked_piece_at_location(Board* board, int x, int y){
-  /*
-  Removes and frees the unlocked piece at the location
-  */
-  Key* possible_key = get_unlocked_piece_at_location(board, x, y);
-  if(possible_key != NULL){
-    set_unlocked_piece_at_location(board, x, y, NULL);
-    free_key(possible_key);
-  }
+    /*
+    Removes and frees the unlocked piece at the location
+    */
+    Key* possible_key = get_unlocked_piece_at_location(board, x, y);
+    if(possible_key != NULL){
+        set_unlocked_piece_at_location(board, x, y, NULL);
+        free_key(possible_key);
+    }
 }
 
 void remove_locked_piece_at_location(Board* board, int x, int y){
-  /*
-  Removes and frees the unlocked piece at the location
-  */
-  Key* possible_key = get_locked_piece_at_location(board, x, y);
-  if(possible_key != NULL){
-    set_locked_piece_at_location(board, x, y, NULL);
-    free_key(possible_key);
-  }
+    /*
+    Removes and frees the unlocked piece at the location
+    */
+    Key* possible_key = get_locked_piece_at_location(board, x, y);
+    if(possible_key != NULL){
+        set_locked_piece_at_location(board, x, y, NULL);
+        free_key(possible_key);
+    }
 }
 
 void new_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation, bool is_locked){
-  if(is_locked){
-    set_locked_piece_at_location(board, x, y,new_key(team, orientation, is_locked));
-  }else{
-    set_unlocked_piece_at_location(board, x, y,new_key(team, orientation, is_locked));
-  }
+    if(is_locked){
+        set_locked_piece_at_location(board, x, y,new_key(team, orientation, is_locked));
+    }else{
+        set_unlocked_piece_at_location(board, x, y,new_key(team, orientation, is_locked));
+    }
 }
 void new_unlocked_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation){
-  new_piece_at_location(board, x, y, team, orientation, false);
+    new_piece_at_location(board, x, y, team, orientation, false);
 }
 void new_locked_piece_at_location(Board* board, int x, int y, Team team, Orientation orientation){
-  new_piece_at_location(board, x, y, team, orientation, true);
+    new_piece_at_location(board, x, y, team, orientation, true);
 }
 
 Key* pop_unlocked_piece_at_location(Board* board, int x, int y){
-  /*
-  Removes the unlocked key at the given location and returns that key
+    /*
+    Removes the unlocked key at the given location and returns that key
 
-  if there is no Key, returns NULL
-  */
-  Key* piece = get_unlocked_piece_at_location(board, x, y);
-  set_unlocked_piece_at_location(board, x, y, NULL);
-  return piece;
+    if there is no Key, returns NULL
+    */
+    Key* piece = get_unlocked_piece_at_location(board, x, y);
+    set_unlocked_piece_at_location(board, x, y, NULL);
+    return piece;
 }
 
 Key* pop_locked_piece_at_location(Board* board, int x, int y){
-  /*
-  Removes the locked key at the given location and returns that key
+    /*
+    Removes the locked key at the given location and returns that key
 
-  if there is no Key, returns NULL
-  */
-  Key* piece = get_locked_piece_at_location(board, x, y);
-  set_unlocked_piece_at_location(board, x, y, NULL);
-  return piece;
+    if there is no Key, returns NULL
+    */
+    Key* piece = get_locked_piece_at_location(board, x, y);
+    set_unlocked_piece_at_location(board, x, y, NULL);
+    return piece;
 }
 
 
 bool is_location_in_bounds(int x, int y){
-  /*
-  returns whether the given location is within an 8x8 grid
-  */
+    /*
+    returns whether the given location is within an 8x8 grid
+    */
 
-  return (x < 8 && y < 8 && x >= 0 && y >= 0);
+    return (x < 8 && y < 8 && x >= 0 && y >= 0);
 }
 
 bool is_unlocked_piece_at_location(Board* board, int x, int y){
-  if(get_unlocked_piece_at_location(board, x, y) != NULL){
-    return true;
-  }else{
-    return false;
-  }
+    if(get_unlocked_piece_at_location(board, x, y) != NULL){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 bool is_locked_piece_at_location(Board* board, int x, int y){
-  if(get_locked_piece_at_location(board, x, y) != NULL){
-    return true;
-  }else{
-    return false;
-  }
+    if(get_locked_piece_at_location(board, x, y) != NULL){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 bool is_unlocked_gold_piece_at_location(Board* board, int x, int y){
-  if(is_unlocked_piece_at_location(board, x, y)){
-    Key* piece = get_unlocked_piece_at_location(board, x, y);
-    switch(piece->team){
-      case gold:
-        return true;
-      case silver:
-        return false;
-      default:
+    if(is_unlocked_piece_at_location(board, x, y)){
+        Key* piece = get_unlocked_piece_at_location(board, x, y);
+        switch(piece->team){
+            case gold:
+                return true;
+            case silver:
+                return false;
+            default:
+                return false;
+        }
+    }else{
         return false;
     }
-  }else{
-    return false;
-  }
 }
 bool is_unlocked_silver_piece_at_location(Board* board, int x, int y){
   if(is_unlocked_piece_at_location(board, x, y)){
@@ -307,7 +298,7 @@ Board* default_board(void){
   Key* gold_key_3 = new_key(gold, north, false);
 
   Key* silver_key_1 = new_key(silver, south, false);
-  Key* silver_key_2 = new_key(silver, south, false);
+  Key* silver_key_2 = new_key(silver, west, false);
   Key* silver_key_3 = new_key(silver, south, false);
 
 

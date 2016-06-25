@@ -12,8 +12,8 @@ While we could make it dynamically expand and contract,
 and greatly simplifies implementation
 */
 typedef struct {
-  Key* unlocked_keys[8][8];
-  Key* locked_keys[8][8];
+    Key* unlocked_keys[8][8];
+    Key* locked_keys[8][8];
 } Board;
 
 /*

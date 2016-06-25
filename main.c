@@ -48,6 +48,7 @@ int main(){
 
   Board* n_board = new_board();
   free_board(n_board);
+  free_GameState(g);
   printf("board is freed\n");
   printf("\n");
 
