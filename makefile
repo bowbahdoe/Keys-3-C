@@ -1,4 +1,4 @@
-CFLAGS = -std=c99 -c -fpic
+CFLAGS = -std=c99 -c -fpic -Wall
 MPFLAGS = -fopenmp
 COMPILER = gcc
 all:
@@ -32,6 +32,9 @@ python3:
 	gcc $(CFLAGS) board.c
 
 	ld -shared key.o keys_wrap.o board.o -o _keys.so
+javascript:
+
+	emcc main.c key.c board.c
 clean:
 	rm board.o
 	rm key.o

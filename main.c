@@ -42,14 +42,31 @@ int main(){
     if(x==-1){break;}
     handle_click(g, x, y);
     print_board(g->gameboard);
+    printf("\n");
+    switch(g->current_state){
+        case gold_play:
+            printf("gold_play");
+            break;
+        case silver_play:
+            printf("silver_play");break;
+        case silver_piece_selected:
+            printf("silver_piece_selected");break;
+        case gold_piece_selected:
+            printf("gold_piece_selected");break;
+        case gold_respawning:
+            printf("gold_respawning");break;
+        case silver_respawning:
+            printf("silver_respawning");break;
+        default:
+            printf("unknown state");break;
+    }
+    printf("\n");
     printf("\n%d\n",g->current_state);
   }
 
 
-  Board* n_board = new_board();
-  free_board(n_board);
   free_GameState(g);
-  printf("board is freed\n");
+  printf("gamestate is freed\n");
   printf("\n");
 
   printf("The size of a game state is %lu\n", sizeof(GameState));

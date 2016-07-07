@@ -13,6 +13,8 @@ Key* new_key(Team team, Orientation orientation, bool is_locked){
     key->team = team;
     key->orientation = orientation;
     key->is_locked = is_locked;
+
+    return key;
 }
 
 void free_key(Key* key){

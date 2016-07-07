@@ -185,12 +185,14 @@ static void gold_piece_selected_action(GameState* g, int x, int y){
         }
         move_piece_to_location(g->gameboard, g->selected_piece_x, g->selected_piece_y, x, y);
     }
+
     else if(is_in_allowed_rotations(g, x, y))
     {
+
         Orientation new_orientation = get_orientation_indicated_by_point(x, y,
                                                                          g->selected_piece_x,
                                                                          g->selected_piece_y);
-        Key* gold_piece = get_unlocked_piece_at_location(g->gameboard, x, y);
+        Key* gold_piece = get_unlocked_piece_at_location(g->gameboard, g->selected_piece_x, g->selected_piece_y);
         gold_piece->orientation = new_orientation;
         g->current_state = silver_play;
     }
@@ -216,7 +218,9 @@ static void silver_piece_selected_action(GameState* g, int x, int y){
         Orientation new_orientation = get_orientation_indicated_by_point(x, y,
                                                                          g->selected_piece_x,
                                                                          g->selected_piece_y);
-        Key* silver_piece = get_unlocked_piece_at_location(g->gameboard, x, y);
+        Key* silver_piece = get_unlocked_piece_at_location(g->gameboard,
+                                                           g->selected_piece_x,
+                                                           g->selected_piece_y);
         silver_piece->orientation = new_orientation;
         g->current_state = gold_play;
     }
