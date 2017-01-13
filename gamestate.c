@@ -29,11 +29,10 @@ bool is_in_respawn_points(Team team, int x, int y){
   }
 }
 
-bool is_in_allowed_movements(GameState* g, int x, int y){
-    int piece_x = g->selected_piece_x;
-    int piece_y = g->selected_piece_y;
-    Key* piece = get_unlocked_piece_at_location(g->gameboard, piece_x, piece_y);
-    Board* board = g->gameboard;
+bool is_in_allowed_movements(int x, int y){
+    int piece_x = gs->selected_piece_x;
+    int piece_y = gs->selected_piece_y;
+    Key* piece  = gb[selected_piece_x][selected_piece_y];
 
     while(is_location_in_bounds(piece_x, piece_y)){
         switch (piece->orientation) {
@@ -68,8 +67,8 @@ bool is_in_allowed_movements(GameState* g, int x, int y){
             default:
                 return false;
         }
-        if(is_unlocked_piece_at_location(board, x, y)){
-            if (get_unlocked_piece_at_location(board, x, y)->team == piece->team){
+        if(is_unlocked_piece_at_loc(x, y)){
+            if (gb[x][y]->team == piece->team){
                 return false;
             }
         }
@@ -125,15 +124,15 @@ Orientation get_orientation_indicated_by_point(int x, int y, int piece_x, int pi
     }
 }
 
-static void gold_play_action(GameState* g, int x, int y){
+static void gold_play_action(int x, int y){
     /*
     Handles input in the case of it being gold's turn w/
     no piece selected
     */
-    if(is_unlocked_gold_piece_at_location(g->gameboard, x, y)){
-        g->current_state = gold_piece_selected;
-        g->selected_piece_x = x;
-        g->selected_piece_y = y;
+    if(is_unlocked_gold_piece_at_loc(x, y)){
+        gs->current_state = gold_piece_selected;
+        gs->selected_piece_x = x;
+        gs->selected_piece_y = y;
     }
 }
 

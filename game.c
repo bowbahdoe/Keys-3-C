@@ -1,5 +1,22 @@
-/* attempt to just write out the game in one file w/o memory management */
-
+/*
+ * Keys: A board game technically
+ * Copyright (C) 2016 Ethan McCue
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ */
 #include "game.h"
 
 static Board gb;
@@ -40,13 +57,13 @@ static void inititalize_data(void){
         }
     }
 
-    gb.unlocked_keys[0][1] = &gold_1;
-    gb.unlocked_keys[0][3] = &gold_2;
-    gb.unlocked_keys[0][5] = &gold_3;
+    gb.unlocked_keys[1][0] = &gold_1;
+    gb.unlocked_keys[3][0] = &gold_2;
+    gb.unlocked_keys[5][0] = &gold_3;
     
-    gb.unlocked_keys[7][2] = &silver_1;
-    gb.unlocked_keys[7][4] = &silver_2;
-    gb.unlocked_keys[7][6] = &silver_3;
+    gb.unlocked_keys[2][7] = &silver_1;
+    gb.unlocked_keys[4][7] = &silver_2;
+    gb.unlocked_keys[6][7] = &silver_3;
     
     gs.current_state = gold_play;
 }
@@ -70,7 +87,7 @@ static inline bool is_unlocked_piece_at_loc(int x, int y){
             (gb.unlocked_keys[x][y] != NULL));
 
 }
-static inline bool is_unlocked_gold_piece_at_loc(int x, int y){
+static bool is_unlocked_gold_piece_at_loc(int x, int y){
     /*
     returns whether there is an unlocked gold piece at the given location
     */
@@ -113,12 +130,21 @@ static inline bool is_locked_silver_piece_at_loc(int x, int y){
 }
 
 void lock_piece_at_loc(int x, int y){
-    gb.locked_keys[x][y] = gb.unlocked_keys[x][y];
-    gb.unlocked_keys[x][y] = NULL;
+    /*
+    locks the piece at the location.
+    
+    If there is already a locked piece there, does nothing
+    */
+    if(gb.locked_keys[x][y] == NULL){
+        gb.locked_keys[x][y] = gb.unlocked_keys[x][y];
+        gb.unlocked_keys[x][y] = NULL;
+    }
 }
 
 void move_piece_to_location(int orig_x, int orig_y, int new_x, int new_y){
-    if(is_unlocked_piece_at_loc(orig_x, orig_y)){
+    if(is_unlocked_piece_at_loc(orig_x, orig_y) &&
+       !is_unlocked_piece_at_loc(new_x,new_y))
+    {
         Key* moving_piece = gb.unlocked_keys[orig_x][orig_y];
         gb.unlocked_keys[new_x][new_y] = moving_piece;
     }
@@ -128,7 +154,8 @@ void move_piece_to_location(int orig_x, int orig_y, int new_x, int new_y){
 Begin Functions for handling game state
 */
 
-bool is_in_respawn_points(Team team, int x, int y){
+bool 
+is_in_respawn_points(Team team, int x, int y){
     switch(team){
         case gold:
             return ((y == 0) && (x == 1 || x == 3 || x == 5));
@@ -136,10 +163,22 @@ bool is_in_respawn_points(Team team, int x, int y){
             return ((y == 7) && (x == 2 || x == 4 || x == 6));
         default:
             return false;
-  }
+    }
 }
 
-bool is_in_allowed_movements(int x, int y){
+bool 
+is_in_allowed_movements(int x, int y){
+    /*
+    returns whether the currently selected key
+    can move to the given spot
+    
+    if it isnt a movement turn, returns false
+    */
+    
+    if(gs.current_state != silver_piece_selected &&
+       gs.current_state != gold_piece_selected)
+       return false;
+       
     int piece_x = gs.selected_piece_x;
     int piece_y = gs.selected_piece_y;
     Key* piece = gb.unlocked_keys[piece_x][piece_y];
@@ -190,28 +229,53 @@ bool is_in_allowed_movements(int x, int y){
     return false;
 }
 
-bool is_in_allowed_rotations(int x, int y){
-    int piece_x = gs.selected_piece_x;
-    int piece_y = gs.selected_piece_y;
+bool 
+is_in_allowed_rotations(int x, int y){
+    /*
+    returns if the given point is within the allowed rotations
+    of the selected piece
+    
+    if it isnt a movement turn, returns false
+    */
+    
+    if(gs.current_state != silver_piece_selected &&
+       gs.current_state != gold_piece_selected)
+       return false;
 
-    for(int x_modifier = -1; x_modifier<2;x_modifier++){
-        for(int y_modifier = -1; y_modifier<2;y_modifier++){
-            if(y_modifier != 0 || x_modifier != 0){
-                if(piece_x + x_modifier == x && piece_y + y_modifier == y
-                   && is_in_bounds(x, y)
-                   && !is_in_allowed_movements(x, y))
-                {
-                    return true;
-                }
-            }
-        }
-    }
+    const int piece_x = gs.selected_piece_x;
+    const int piece_y = gs.selected_piece_y;
 
-    return false;
+
+    /*
+    Premature Optimization
+    */
+    #define upleft    (piece_x - 1 == x && piece_y + 1 == y)
+    #define up        (piece_x     == x && piece_y + 1 == y)
+    #define upright   (piece_x + 1 == x && piece_y + 1 == y)
+    #define right     (piece_x + 1 == x && piece_y     == y)
+    #define downright (piece_x + 1 == x && piece_y - 1 == y)
+    #define down      (piece_x     == x && piece_y - 1 == y)
+    #define downleft  (piece_x - 1 == x && piece_y - 1 == y)
+    #define left      (piece_x - 1 == x && piece_y     == y)
+    
+    return (is_in_bounds(x, y)
+            && !is_in_allowed_movements(x, y)
+            && (upleft || up || upright || right 
+                || downright || down || downleft || left));
+    
+    #undef upleft
+    #undef up
+    #undef upright
+    #undef right
+    #undef downright
+    #undef down
+    #undef downleft
+    #undef left
 }
 
-static Orientation get_orientation_indicated(int x, int y, int piece_x, int piece_y){
-    if (x == piece_x && piece_y + 1 == y){
+static Orientation 
+get_orientation_indicated(int x, int y, int piece_x, int piece_y){
+    if (piece_x == x && piece_y + 1 == y){
         return north;
     }else if (piece_x + 1 == x && piece_y + 1 == y){
         return northeast;
@@ -268,29 +332,25 @@ static void silver_play_action(int x, int y){
 }*/
 
 static void gold_piece_selected_action(int x, int y){
-    if(is_in_allowed_movements(x, y))
-    {
-
+    if(is_in_allowed_movements(x, y)){
         if(is_locked_gold_piece_at_loc(x, y)){
             gs.current_state = gold_respawning;
         }else{
             gs.current_state = silver_play;
         }
+        
         if(is_unlocked_silver_piece_at_loc(x, y)){
             lock_piece_at_loc(x, y);
         }
         move_piece_to_location(gs.selected_piece_x, gs.selected_piece_y, x, y);
     }
 
-    else if(is_in_allowed_rotations(x, y))
-    {
-
-        Orientation new_orientation = get_orientation_indicated(x, y,
-                                                                gs.selected_piece_x,
-                                                                gs.selected_piece_y);
+    else if(is_in_allowed_rotations(x, y)){
         Key* gold_piece = gb.unlocked_keys[gs.selected_piece_x]
                                           [gs.selected_piece_y];
-        gold_piece->orientation = new_orientation;
+        gold_piece->orientation = get_orientation_indicated(x, y,
+                                                            gs.selected_piece_x,
+                                                            gs.selected_piece_y);
         gs.current_state = silver_play;
     }
 }
@@ -304,7 +364,7 @@ void handle_click(int x, int y){
             //gold_respawning_action(x, y);
             break;
         case gold_piece_selected:
-            //gold_piece_selected_action(x, y);
+            gold_piece_selected_action(x, y);
             break;
         case gold_win:
             break;
@@ -325,37 +385,47 @@ void handle_click(int x, int y){
 void print_board(){
     for(int y = 7; y>=0; y--){
         for(int e = 7; e>=0; e--){
-            
+            handle_click(e,y);
             if(is_unlocked_gold_piece_at_loc(e,y)){
-                printf("G ");
+                printf("G");
+                printf("%d",gb.unlocked_keys[e][y]-> orientation);
+                printf(" ");
             }
             else if(is_unlocked_silver_piece_at_loc(e,y)){
-                printf("S ");
+                printf("S");
+                printf("%d",gb.unlocked_keys[e][y]-> orientation);
+                printf(" ");
+
             }
             else{
-                printf("* ");
+                printf("*  ");
             }
         }
         printf("\t\t");
         for(int x = 7; x>=0; x--){
+            handle_click(x,y);
             if(is_locked_gold_piece_at_loc(x,y)){
-                printf("G ");
+                printf("G  ");
             }
             else if(is_locked_silver_piece_at_loc(x,y)){
-                printf("S ");
+                printf("S  ");
+
             }
             else{
-                printf("* ");
+                printf("*  ");
                 
             }
         }
         printf("\n");
     } 
 }
+#ifdef debug
 int main(){
     inititalize_data();
+    handle_click(2,0);
+    handle_click(1,0);
+    printf("%d\n", gs.current_state);
     print_board();
+    printf("%d\n", gs.current_state);
 }
-char* get_board_as_JSON(){
-    return "NYI";
-}
+#endif
